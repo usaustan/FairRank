@@ -1,0 +1,20 @@
+quantuslib/
+├── quantuslib/
+│   ├── __init__.py
+│   ├── vanilla.py           # Black-Scholes + Binomial + American
+│   ├── heston.py            # Full Heston semi-analytic (Fourier)
+│   ├── sabr.py              # SABR volatility model
+│   ├── surface.py           # Implied vol surface + SVI fitting
+│   ├── greeks.py
+│   ├── calibration.py
+│   └── risk.py              # Portfolio Greeks & scenario shocks
+├── benchmarks/
+│   └── speed_vs_quantlib.py
+├── data/
+│   └── spy_option_chain_2025.csv  # Synthetic + real historical (public)
+├── cli.py                   # quantus price --strike 420 --type call ...
+├── tests/ (180+ tests)
+├── requirements.txt
+├── pyproject.toml
+├── README.md
+└── LICENSE (MIT + commercial clause)
