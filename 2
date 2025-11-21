@@ -1,0 +1,16 @@
+import numpy as np
+from typing import Dict, List
+
+def exposure_disparity(ranked_items: List[int], item_groups: List[str]) -> float:
+    exposure = {}
+    for pos, item in enumerate(ranked_items[:50]):
+        group = item_groups[item]
+        exposure[group] = exposure.get(group, 0) + 1 / np.log2(pos + 2)
+    values = np.array(list(exposure.values()))
+    return values.max() / values.min() if len(values) > 1 else 1.0
+
+def ndcg_loss(original: np.ndarray, reranked_scores: np.ndarray) -> float:
+    def dcg(scores):
+        return np.sum(scores / np.log2(np.arange(2, len(scores)+2)))
+    return dcg(np.sort(original)[::-1]) / dcg(reranked_scores) if dcg(reranked_scores) > 0 else 0
+
