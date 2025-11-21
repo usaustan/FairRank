@@ -1,0 +1,29 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+from fairrank.reranker import detached_rerank
+from fairrank.metrics import exposure_disparity
+
+st.title("🔧 FairRank – Diversity Bias Corrector")
+st.write("Upload any recommendation list → fix underrepresentation instantly")
+
+uploaded = st.file_uploader("CSV with columns: item_id, score, group (e.g., gender, ethnicity)", type="csv")
+
+if uploaded:
+    df = pd.read_csv(uploaded)
+    scores = df['score'].values
+    groups = df['group'].values
+    items = df['item_id'].values
+
+    target = st.slider("Fairness strength", 0.0, 1.0, 0.7)
+    new_order = detached_rerank(scores, groups, {"male": 0.5, "female": 0.5}, alpha=target)
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.write("Before (biased)")
+        st.dataframe(df.iloc[:20])
+        st.write(f"Disparity: {exposure_disparity(list(range(len(scores))), groups):.2f}x")
+    with col2:
+        st.write("After (fair)")
+        st.dataframe(df.iloc[new_order[:20]])
+        st.write(f"Disparity: {exposure_disparity(new_order, groups):.2f}x")
